@@ -108,7 +108,7 @@ module EFax
     def self.set_disposition(xml, disposition)
       case disposition[:method]
         when "POST"
-          xml.DispositionUrl(disposition[:url])
+          xml.DispositionURL(disposition[:url])
           xml.DispositionLevel "BOTH"
           xml.DispositionMethod("POST")
         when "EMAIL"
@@ -142,18 +142,18 @@ module EFax
   end
 
   class OutboundResponse
-    attr_reader :status_code, :error_message, :error_level, :doc_id, :doc
+    attr_reader :status_code, :error_message, :error_level, :doc_id
 
     def initialize(response)  #:nodoc:
       if response.is_a? Net::HTTPOK
-        @doc = Hpricot(response.body)
-        #@status_code = doc.at(:statuscode).inner_text.to_i
-        #@error_message = doc.at(:errormessage)
-        #@error_message = @error_message.inner_text if @error_message
-        #@error_level = doc.at(:errorlevel)
-        #@error_level = @error_level.inner_text if @error_level
-        #@doc_id = doc.at(:docid).inner_text
-        #@doc_id = @doc_id.empty? ? nil : @doc_id
+        doc = Hpricot(response.body)
+        @status_code = doc.at(:statuscode).inner_text.to_i
+        @error_message = doc.at(:errormessage)
+        @error_message = @error_message.inner_text if @error_message
+        @error_level = doc.at(:errorlevel)
+        @error_level = @error_level.inner_text if @error_level
+        @doc_id = doc.at(:docid).inner_text
+        @doc_id = @doc_id.empty? ? nil : @doc_id
       else
         @status_code = RequestStatus::HTTP_FAILURE
         @error_message = "HTTP request failed (#{response.code})"
