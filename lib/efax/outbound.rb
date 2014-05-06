@@ -62,7 +62,7 @@ module EFax
     def self.post(name, company, fax_number, subject, content, options={})
       xml_request = xml(name, company, fax_number, subject, content, options)
       response = Net::HTTPS.start(EFax::Uri.host, EFax::Uri.port) do |https|
-        https.post(EFax::Uri.path, params(xml_request), headers_for_type)
+        https.post(EFax::Uri.path, params(xml_request), get_headers_for_type)
       end
       OutboundResponse.new(response)
     end
@@ -131,6 +131,7 @@ module EFax
       end
     end
 
+    private_class_method :get_headers_for_type
     private_class_method :xml
   end
 
