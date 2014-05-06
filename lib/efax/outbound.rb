@@ -62,7 +62,7 @@ module EFax
     def self.post(name, company, fax_number, subject, content, options={})
       xml_request = xml(name, company, fax_number, subject, content, options)
       response = Net::HTTPS.start(EFax::Uri.host, EFax::Uri.port) do |https|
-        https.post(EFax::Uri.path, params(xml_request), get_headers_for_type)
+        https.post(EFax::Uri.path, params(xml_request), get_headers_for_type(options))
       end
       OutboundResponse.new(response)
     end
@@ -123,8 +123,8 @@ module EFax
       end
     end
 
-    def self.get_headers_for_type(disposition_method)
-      if disposition_method == 'POST'
+    def self.get_headers_for_type(options)
+      if options[:disposition] && options[:disposition][:method] == 'POST'
         { 'Content-Type' => 'application/x-www-form-urlencoded' }
       else
         {'Content-Type' => 'text/xml'}
