@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = EFax::VERSION
 
-  gem.add_runtime_dependency "builder", "~> 3.0.0"
+  gem.add_runtime_dependency "builder", "~> 3.1"
   gem.add_runtime_dependency "hpricot", "~> 0.8.1"
 
   gem.add_development_dependency "test-unit", "~> 2.3.2"
