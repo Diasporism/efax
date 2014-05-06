@@ -62,7 +62,7 @@ module EFax
     def self.post(name, company, fax_number, subject, content, options={})
       xml_request = xml(name, company, fax_number, subject, content, options)
       response = Net::HTTPS.start(EFax::Uri.host, EFax::Uri.port) do |https|
-        https.post(EFax::Uri.path, params(xml_request), EFax::HEADERS)
+        https.post(EFax::Uri.path, params(xml_request), headers_for_type)
       end
       OutboundResponse.new(response)
     end
@@ -84,11 +84,6 @@ module EFax
             xml.FaxHeader(subject)
           end
           xml.DispositionControl do
-            if options[:disposition] && options[:disposition][:level]
-              xml.DispositionLevel(options[:disposition][:level])
-            else
-              xml.DispositionLevel("NONE")
-            end
             set_disposition(xml, options[:disposition]) if options[:disposition]
           end
           xml.Recipients do
@@ -113,16 +108,26 @@ module EFax
     def self.set_disposition(xml, disposition)
       case disposition[:method]
         when "POST"
-          xml.DispositionMethod("POST")
           xml.DispositionUrl(disposition[:url])
+          xml.DispositionLevel "BOTH"
+          xml.DispositionMethod("POST")
         when "EMAIL"
           xml.DispositionMethod("EMAIL")
           xml.DispositionEmails do
             xml.DispositionEmail do
+              xml.DispositionLevel "BOTH"
               xml.DispositionRecipient(disposition[:recipient]) if disposition[:recipient]
               xml.DispositionAddress(disposition[:address]) if disposition[:address]
             end
           end
+      end
+    end
+
+    def self.get_headers_for_type(disposition_method)
+      if disposition_method == 'POST'
+        { 'Content-Type' => 'application/x-www-form-urlencoded' }
+      else
+        {'Content-Type' => 'text/xml'}
       end
     end
 
