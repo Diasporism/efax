@@ -78,16 +78,18 @@ module EFax
         end
         xml.Transmission do
           xml.TransmissionControl do
-            xml.Resolution("FINE")
+            xml.Resolution("STANDARD")
             xml.Priority("NORMAL")
             xml.SelfBusy("ENABLE")
             xml.FaxHeader(subject)
           end
           xml.DispositionControl do
-            disposition = options[:disposition]
-            disposition ?
-              set_disposition(xml, disposition) :
+            if options[:disposition] && options[:disposition][:level]
+              xml.DispositionLevel(options[:disposition][:level])
+            else
               xml.DispositionLevel("NONE")
+            end
+            set_disposition(xml, options[:disposition]) if options[:disposition]
           end
           xml.Recipients do
             xml.Recipient do
@@ -109,19 +111,18 @@ module EFax
     end
 
     def self.set_disposition(xml, disposition)
-      #raise error if disposition[:level] && !DISPOSITION_LEVELS.include?(disposition[:level])
-      xml.DispositionLevel(disposition[:level] || "NONE")
       case disposition[:method]
         when "POST"
           xml.DispositionMethod("POST")
-          #make url required
-          #make sure url is valid
           xml.DispositionUrl(disposition[:url])
         when "EMAIL"
           xml.DispositionMethod("EMAIL")
-          xml.DispositionEmail(disposition[:email]) if disposition[:email]
-          xml.DispositionEmails(disposition[:emails]) if disposition[:emails]
-          xml.DispositionAddress(disposition[:address]) if disposition[:address]
+          xml.DispositionEmails do
+            xml.DispositionEmail do
+              xml.DispositionRecipient(disposition[:recipient]) if disposition[:recipient]
+              xml.DispositionAddress(disposition[:address]) if disposition[:address]
+            end
+          end
       end
     end
 

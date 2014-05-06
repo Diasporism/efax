@@ -327,7 +327,7 @@ module EFaxOutboundTest
             </AccessControl>
             <Transmission>
               <TransmissionControl>
-                <Resolution>FINE</Resolution>
+                <Resolution>STANDARD</Resolution>
                 <Priority>NORMAL</Priority>
                 <SelfBusy>ENABLE</SelfBusy>
                 <FaxHeader>Subject</FaxHeader>
@@ -368,7 +368,7 @@ module EFaxOutboundTest
             </AccessControl>
             <Transmission>
               <TransmissionControl>
-                <Resolution>FINE</Resolution>
+                <Resolution>STANDARD</Resolution>
                 <Priority>NORMAL</Priority>
                 <SelfBusy>ENABLE</SelfBusy>
                 <FaxHeader>Subject</FaxHeader>
