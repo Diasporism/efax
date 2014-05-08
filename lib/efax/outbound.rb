@@ -78,6 +78,7 @@ module EFax
         end
         xml.Transmission do
           xml.TransmissionControl do
+            xml.TransmissionID(options[:transmission_id]) if options[:transmission_id]
             xml.Resolution("STANDARD")
             xml.Priority("NORMAL")
             xml.SelfBusy("ENABLE")
